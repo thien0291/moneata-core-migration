@@ -1,0 +1,6 @@
+[submodule "moneta-core-authz"]
+	path = moneta-core-authz
+	url = ./moneta-core-authz
+[submodule "pinet-core-2.0"]
+	path = pinet-core-2.0
+	url = ./pinet-core-2.0
