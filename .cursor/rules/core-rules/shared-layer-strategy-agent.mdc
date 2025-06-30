@@ -1,0 +1,80 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Use when deciding whether to place services in shared layer vs pipeline-specific code
+globs: 
+alwaysApply: false
+---
+
+# Shared Layer Strategy for Serverless Pipeline Architecture
+
+## Context
+
+- Designing shared infrastructure components for serverless pipelines
+- Implementing reusable services that work across multiple business domains
+- Balancing code reuse with pipeline flexibility and independence
+- **CRITICAL: Ensuring filename, module name, and class name REFLECT THE CONTENT**
+
+## Critical Rules
+
+### 🚨 MANDATORY Naming Convention Rules (NO EXCEPTIONS)
+
+**The filename, module name, and class name MUST REFLECT THE CONTENT:**
+
+- **Shared services MUST use generic names**: `CryptoService`, `CertificateService`, `PartnerCommunicationService`
+- **Pipeline services MUST use domain-specific names**: `SubscriptionService`, `DisputeService`, `SettlementService`
+- **Function names MUST match service scope**: Generic services = generic functions, Domain services = domain functions
+- **File names MUST match class names**: `crypto_service.py` → `CryptoService`
+- **No misleading combinations**: Never mix generic names with domain logic or vice versa
+
+### Shared Layer DO's and DON'Ts
+
+**✅ PUT in Shared Layer:**
+- Generic cryptographic operations (`CryptoService`)
+- Generic certificate management (`CertificateService`)
+- Generic HTTP communication (`PartnerCommunicationService`)
+- Domain models (pure data structures)
+- Database repositories (CRUD operations)
+- Generic utilities and validators
+
+**❌ DON'T PUT in Shared Layer:**
+- Business logic specific to one domain
+- Contract verification with business rules
+- Domain-specific signing logic
+- Pipeline-specific workflows
+- Business validation rules
+
+### Content Validation Rule
+
+- If function content is **generic infrastructure** → Service MUST have **generic name**
+- If function content is **domain-specific business logic** → Service MUST have **domain-specific name**
+- Content determines correct naming, not intended usage
+
+## Examples
+
+<example>
+# ✅ CORRECT: Generic infrastructure service with generic name
+shared/services/crypto_service.py → class CryptoService:
+    def verify_digital_signature(self, data: dict, certificate: Certificate) -> bool:
+        # Generic RSA signature verification - no business logic
+
+# ✅ CORRECT: Pipeline-specific service with domain name
+subscription_pipeline/subscription_service.py → class SubscriptionService:
+    def validate_subscription_contract(self, contract: dict) -> bool:
+        # Subscription-specific business validation
+</example>
+
+<example type="invalid">
+# ❌ WRONG: Misleading name suggests subscription-specific but contains generic crypto
+shared/services/subscription_certificate_service.py → class SubscriptionCertificateService:
+    def verify_rsa_signature(self, data: dict) -> bool:  # Generic function!
+        # This is GENERIC crypto, not subscription-specific!
+
+# ❌ WRONG: Generic name but contains business logic
+shared/services/crypto_service.py → class CryptoService:
+    def validate_subscription_contract(self, contract: dict) -> bool:  # Business logic!
+        # This is SUBSCRIPTION BUSINESS LOGIC, not generic crypto!
+</example>

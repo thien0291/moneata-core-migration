@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+@/pinet-core-2.0 is modular monolith with Ruby On Rails & Packwerk
+@/moneta-core-authz is microservice with AWS SAM (serverless application model).
+
+
+We are moving from modular monolith to microservice on AWS SAM
